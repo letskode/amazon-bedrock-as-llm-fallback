@@ -1,0 +1,9 @@
+# Core dependencies
+boto3>=1.34.0
+litellm>=1.51.4
+openai>=1.40.0
+anthropic>=0.34.0
+python-dotenv>=1.0.1
+
+# Optional dependencies
+requests>=2.32.3
