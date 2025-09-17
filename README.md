@@ -57,7 +57,7 @@ All implementations share the same router-style configuration pattern and suppor
 ```bash
 # Clone the repository
 git clone <repository-url>
-cd LLM-Fallback-Bedrock
+cd amazon-bedrock-as-llm-fallback
 
 # Install dependencies
 pip install -r requirements.txt
@@ -309,7 +309,7 @@ logging.basicConfig(level=logging.DEBUG)  # For all routers
 ## File Structure
 
 ```
-LLM-Fallback-Bedrock/
+amazon-bedrock-as-llm-fallback/
 ├── router_config.py              # Centralized router configuration
 ├── litellm_fallback_router.py    # LiteLLM multi-provider router
 ├── bedrock_converse_fallback.py  # Bedrock Converse API router
