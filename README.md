@@ -1,6 +1,14 @@
 # LLM Fallback Router Implementations
 
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Python 3.8+](https://img.shields.io/badge/python-3.8+-blue.svg)](https://www.python.org/downloads/)
+[![AWS Bedrock](https://img.shields.io/badge/AWS-Bedrock-orange.svg)](https://aws.amazon.com/bedrock/)
+
 A collection of production-ready LLM fallback router implementations that demonstrate automatic failover between different AI model providers (OpenAI, Anthropic, Amazon Bedrock) with consistent router-style configuration.
+
+> **🚀 Zero-downtime AI operations during provider outages**
+
+This project demonstrates how to use **Amazon Bedrock as a reliable foundation** for LLM applications, providing automatic failover when other providers experience outages.
 
 ## Business Problem
 
@@ -15,7 +23,7 @@ Major LLM providers including Anthropic, OpenAI, and Google Gemini have experien
 
 ## Solution: Multi-Provider Fallback Strategy
 
-This project provides a comprehensive fallback strategy that enables continuous operations during outages while promoting Amazon Bedrock adoption as a reliable foundation.
+This project provides a comprehensive fallback strategy that enables continuous operations during outages while promoting Amazon Bedrock adoption as a reliable foundation for enterprise AI applications.
 
 **Benefits:**
 - ✅ **Zero-downtime operations** during provider outages
@@ -24,6 +32,29 @@ This project provides a comprehensive fallback strategy that enables continuous 
 - ✅ **Cost optimization** through strategic model routing
 - ✅ **Enhanced reliability** with multiple backup options
 - ✅ **Bedrock-first architecture** for enterprise-grade stability
+- ✅ **AWS-native integration** with IAM, CloudWatch, and VPC
+
+## Architecture
+
+This sample demonstrates a resilient AI architecture pattern:
+
+```
+┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
+│   Primary API   │───▶│  Fallback API   │───▶│  Amazon Bedrock │
+│  (OpenAI/Anthropic) │    │  (Anthropic)    │    │   (Reliable)    │
+└─────────────────┘    └─────────────────┘    └─────────────────┘
+        │                       │                       │
+        ▼                       ▼                       ▼
+   Rate Limits              API Errors              Always Available
+   Outages                  Auth Issues             Multi-Region
+   Network Issues           Service Down            Enterprise SLAs
+```
+
+**Key AWS Services Used:**
+- **Amazon Bedrock** - Foundation model hosting and inference
+- **AWS IAM** - Secure access control and permissions
+- **AWS CloudWatch** - Monitoring and observability (optional)
+- **AWS VPC** - Network security (optional)
 
 ## Router Implementations
 
@@ -56,13 +87,14 @@ All implementations share the same router-style configuration pattern and suppor
 
 ```bash
 # Clone the repository
-git clone <repository-url>
-cd amazon-bedrock-as-llm-fallback
+git clone https://github.com/yourusername/llm-fallback-router.git
+cd llm-fallback-router
 
-# Install dependencies
+# Run setup script (recommended)
+python setup.py
+
+# Or manual setup:
 pip install -r requirements.txt
-
-# Copy environment template
 cp .env.example .env
 ```
 
@@ -202,7 +234,13 @@ python3 litellm_fallback_router.py
 python3 bedrock_converse_fallback.py
 ```
 
-## AWS Setup
+## AWS Deployment
+
+### Prerequisites
+
+1. **AWS Account** with access to Amazon Bedrock
+2. **AWS CLI** configured with appropriate credentials
+3. **Python 3.8+** installed locally or on EC2/Lambda
 
 ### IAM Permissions
 
@@ -232,11 +270,32 @@ Create an IAM role/user with these permissions:
 ### Bedrock Model Access
 
 Enable model access in AWS Bedrock console:
-1. Go to AWS Bedrock console
+1. Go to [AWS Bedrock console](https://console.aws.amazon.com/bedrock/)
 2. Navigate to "Model access"
 3. Request access for required models:
-   - Anthropic Claude models
-   - Meta Llama models
+   - Anthropic Claude models (Claude 3.5 Sonnet, Claude 3.5 Haiku)
+   - Meta Llama models (Llama 3.1, Llama 3.2)
+   - US region models (us.anthropic.claude-*, us.meta.llama*)
+
+### AWS Best Practices
+
+**Security:**
+- Use IAM roles instead of access keys when running on AWS services
+- Enable AWS CloudTrail for API call auditing
+- Use VPC endpoints for Bedrock access in production
+- Implement least-privilege access policies
+
+**Cost Optimization:**
+- Monitor usage with AWS Cost Explorer
+- Use cheaper models (Haiku) for simple tasks
+- Implement request caching to reduce API calls
+- Set up billing alerts for cost control
+
+**Reliability:**
+- Deploy across multiple AWS regions
+- Use AWS Lambda for serverless scaling
+- Implement circuit breakers for failed models
+- Monitor with CloudWatch metrics and alarms
 
 ## Error Handling
 
@@ -309,33 +368,49 @@ logging.basicConfig(level=logging.DEBUG)  # For all routers
 ## File Structure
 
 ```
-amazon-bedrock-as-llm-fallback/
+llm-fallback-router/
 ├── router_config.py              # Centralized router configuration
 ├── litellm_fallback_router.py    # LiteLLM multi-provider router
 ├── bedrock_converse_fallback.py  # Bedrock Converse API router
 ├── openai_bedrock_openweight_fallback.py  # OpenAI + Bedrock router
+├── anthropic_to_bedrock_fallback.py  # Anthropic SDK with Bedrock fallback
+├── litellm_multi_model.py        # Multi-model testing example
+├── litellm_router_config_example.py  # Router configuration examples
 ├── test_litellm_fallback.py      # LiteLLM test script
 ├── test_bedrock_converse_fallback.py  # Bedrock test script
+├── setup.py                      # Easy setup script
 ├── requirements.txt              # Python dependencies
 ├── .env.example                  # Environment template
+├── .github/                      # GitHub templates and workflows
+├── CONTRIBUTING.md               # Contribution guidelines
+├── SECURITY.md                   # Security policy
+├── CHANGELOG.md                  # Version history
 └── README.md                     # This file
 ```
 
 ## Contributing
 
-1. Fork the repository
-2. Create a feature branch
-3. Add tests for new functionality
-4. Update documentation
-5. Submit a pull request
+We welcome contributions! Please see [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
+
+## Security
+
+For security concerns, please see our [Security Policy](SECURITY.md).
+
+## Changelog
+
+See [CHANGELOG.md](CHANGELOG.md) for version history and changes.
 
 ## License
 
-This project is licensed under the MIT License - see the LICENSE file for details.
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
 ## Support
 
 For issues and questions:
-- Check the troubleshooting section
-- Review AWS Bedrock documentation
-- Open an issue in the repository
+- Check the [troubleshooting section](#troubleshooting)
+- Review [AWS Bedrock documentation](https://docs.aws.amazon.com/bedrock/)
+- Open an [issue](../../issues) in the repository
+
+## Star History
+
+If this project helps you, please consider giving it a ⭐!
